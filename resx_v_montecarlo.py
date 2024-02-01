@@ -9,7 +9,10 @@ relevant_branches = [
     'itParam_align_clus_unbiased_local_res_x',
     'fitParam_align_local_residual_x',
     'itParam_align_clus_unbiased_res_id',
-    'fitParam_align_id'
+    'fitParam_align_id',
+    'fitParam_chi2',
+    'fitParam_nMeasurements',
+    'fitParam_pz'
 ]
 
 def gaussfun(data):
@@ -101,10 +104,14 @@ def plot(p, data, sta, lay, mod, param, idparam, mc, r=0.1, draw_layer=False, dr
     p.legend(fontsize=15, loc=1)
 
 
-with uproot.open('kf_alignment_data.root') as file:
+with uproot.open('kf_alignment_data_v2.root') as file:
     with uproot.open('kf_alignment_mc.root') as mc_file:
         data = file['trackParam'].arrays(relevant_branches, library='ak')
+        cut = ak.where((data['fitParam_chi2'] < 100)&(data['fitParam_nMeasurements'] >= 20) & (data['fitParam_pz'] >= 200))
         mc_data = mc_file['trackParam'].arrays(relevant_branches, library='ak')
+        mc_cut = ak.where((mc_data['fitParam_chi2'] < 100)&(mc_data['fitParam_nMeasurements'] >= 20) & (mc_data['fitParam_pz'] >= 200))
+        data = data[cut]
+        mc_data = mc_data[mc_cut]
         for sta in range(4):
             for lay in range(3):
                 for mod in range(8):
