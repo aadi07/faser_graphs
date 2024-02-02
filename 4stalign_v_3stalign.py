@@ -27,9 +27,9 @@ relevant_branches_new = [
 ]
 
 relevant_branches_old = [
-    "itParam_align_clus_unbiased_local_res_x",
+    "fitParam_align_clus_unbiased_local_res_x",
     "fitParam_align_local_residual_x",
-    "itParam_align_clus_unbiased_res_id",
+    "fitParam_align_clus_unbiased_res_id",
     "fitParam_align_id",
     "fitParam_chi2",
     "fitParam_ndf",
@@ -55,7 +55,7 @@ def gaussfun(data):
 
     # Generate data from bins as a set of points 
     bin_size = abs(bins[1]-bins[0])
-    x =np.linspace(start=bins[0]+bin_size/2.0,stop=bins[-2]+bin_size/2.0, num=nbins,endpoint=True)
+    x = np.linspace(start=bins[0]+bin_size/2.0,stop=bins[-2]+bin_size/2.0, num=nbins,endpoint=True)
     y = n
 
     model = GaussianModel()
@@ -144,7 +144,7 @@ with uproot.open(four_sta_path) as four_sta_file:
             mc_data = mc_file["trackParam"].arrays(relevant_branches_new, library="ak")
             mc_data = mc_data[ak.where((mc_data["fitParam_chi2"] < 100)&(mc_data["fitParam_nMeasurements"] >= 20))]
             three_sta_data = three_sta_file["trackParam"].arrays(relevant_branches_old, library="ak")
-            three_sta_data = three_sta_data[ak.where((mc_data["fitParam_chi2"] < 100)&(mc_data["fitParam_nMeasurements"] >= 15))]
+            three_sta_data = three_sta_data[ak.where((three_sta_data["fitParam_chi2"] < 100)&(three_sta_data["fitParam_nMeasurements"] >= 15))]
             fig = plt.figure(figsize=(10, 10))
             trackparam_plot(
                 three_sta_data["fitParam_chi2"]/three_sta_data["fitParam_ndf"],
@@ -300,11 +300,11 @@ def plot(p, data, sta, lay, mod, param, idparam, label, r=0.1, draw_layer=False,
     bin, x, result = gaussfun(res)
     mu, mu_err, std, std_err = getmusig(result)
     if label == "mc":
-        color = "blue"
-    elif label == "3sta":
-        color = "red"
-    elif label == "4sta":
         color = "green"
+    elif label == "3sta":
+        color = "blue"
+    elif label == "4sta":
+        color = "orange"
     else:
         color = "black"
     p.hist(
@@ -335,7 +335,7 @@ with uproot.open(four_sta_path) as four_sta_file:
             data = data[ak.where((data["fitParam_chi2"] < 100)&(data["fitParam_nMeasurements"] >= 20) & (data["fitParam_pz"] >= 200))]
             mc_data = mc_data[ak.where((mc_data["fitParam_chi2"] < 100)&(mc_data["fitParam_nMeasurements"] >= 20) & (mc_data["fitParam_pz"] >= 200))]
             three_sta_data = three_sta_file["trackParam"].arrays(relevant_branches_old, library="ak")
-            three_sta_data = three_sta_data[ak.where((mc_data["fitParam_chi2"] < 100)&(mc_data["fitParam_nMeasurements"] >= 15) & (mc_data["Track_Pz_atIFT"] >= 200))]
+            three_sta_data = three_sta_data[ak.where((three_sta_data["fitParam_chi2"] < 100)&(three_sta_data["fitParam_nMeasurements"] >= 15) & (three_sta_data["Track_Pz_atIFT"] >= 200))]
             for sta in range(1,4):
                 for lay in range(3):
                     for mod in range(8):
@@ -347,7 +347,7 @@ with uproot.open(four_sta_path) as four_sta_file:
                         ax1.set_title(f"biased,station{sta},layer{lay},module{mod}", fontsize=25)
                         plot(ax2, data, sta, lay, mod, "itParam_align_clus_unbiased_local_res_x", "itParam_align_clus_unbiased_res_id", "4sta", 0.1, True, True)
                         plot(ax2, mc_data, sta, lay, mod, "itParam_align_clus_unbiased_local_res_x", "itParam_align_clus_unbiased_res_id", "mc", 0.1, True, True)
-                        plot(ax1, three_sta_data, sta, lay, mod, "itParam_align_clus_unbiased_local_res_x", "itParam_align_clus_unbiased_res_id", "3sta", 0.1, True, True)
+                        plot(ax2, three_sta_data, sta, lay, mod, "fitParam_align_clus_unbiased_local_res_x", "fitParam_align_clus_unbiased_res_id", "3sta", 0.1, True, True)
                         ax2.set_title(f"unbiased,station{sta},layer{lay},module{mod}", fontsize=25)
                         fig.savefig(f"res_x_v_montecarlo/station{sta}_layer{lay}_module{mod}_cluster_resx.pdf", format="pdf")
                         plt.close(fig)
@@ -363,7 +363,7 @@ with uproot.open(four_sta_path) as four_sta_file:
                     ax1.set_title(f"biased,station{sta},layer{lay}", fontsize=25)
                     plot(ax2, data, sta, lay, mod, "itParam_align_clus_unbiased_local_res_x", "itParam_align_clus_unbiased_res_id", "4sta", 0.1, True, False)
                     plot(ax2, mc_data, sta, lay, mod, "itParam_align_clus_unbiased_local_res_x", "itParam_align_clus_unbiased_res_id", "mc", 0.1, True, False)
-                    plot(ax1, three_sta_data, sta, lay, mod, "itParam_align_clus_unbiased_local_res_x", "itParam_align_clus_unbiased_res_id", "3sta", 0.1, True, False)
+                    plot(ax2, three_sta_data, sta, lay, mod, "fitParam_align_clus_unbiased_local_res_x", "fitParam_align_clus_unbiased_res_id", "3sta", 0.1, True, False)
                     ax2.set_title(f"unbiased,station{sta},layer{lay}", fontsize=25)
                     fig.savefig(f"res_x_v_montecarlo/station{sta}_layer{lay}_cluster_resx.pdf", format="pdf")
                     plt.close(fig)
@@ -379,7 +379,7 @@ with uproot.open(four_sta_path) as four_sta_file:
                 ax1.set_title(f"biased,station{sta}", fontsize=25)
                 plot(ax2, data, sta, lay, mod, "itParam_align_clus_unbiased_local_res_x", "itParam_align_clus_unbiased_res_id", "4sta", 0.1, False, False)
                 plot(ax2, mc_data, sta, lay, mod, "itParam_align_clus_unbiased_local_res_x", "itParam_align_clus_unbiased_res_id", "mc", 0.1, False, False)
-                plot(ax1, three_sta_data, sta, lay, mod, "itParam_align_clus_unbiased_local_res_x", "itParam_align_clus_unbiased_res_id", "3sta", 0.1, False, False)
+                plot(ax2, three_sta_data, sta, lay, mod, "fitParam_align_clus_unbiased_local_res_x", "fitParam_align_clus_unbiased_res_id", "3sta", 0.1, False, False)
                 ax2.set_title(f"unbiased,station{sta}", fontsize=25)
                 fig.savefig(f"res_x_v_montecarlo/station{sta}_cluster_resx.pdf", format="pdf")
                 plt.close(fig)
