@@ -238,12 +238,12 @@ with uproot.open(four_sta_path) as four_sta_file:
             )
 
             trackparam_plot(
-                three_sta_data["Track_Px_atIFT"]/three_sta_data["Track_Py_atIFT"],
-                data["fitParam_px"]/data["fitParam_py"],
-                mc_data["fitParam_px"]/mc_data["fitParam_py"],
-                "px_by_py.pdf",
-                "X Momentum/Y Momentum",
-                "px/py",
+                three_sta_data["Track_Py_atIFT"]/three_sta_data["Track_Pz_atIFT"],
+                data["fitParam_py"]/data["fitParam_pz"],
+                mc_data["fitParam_py"]/mc_data["fitParam_pz"],
+                "py_by_pz.pdf",
+                "Y Momentum/Z Momentum",
+                "py/pz",
                 "Number of Events (normalized)",
                 bins=np.linspace(-5, 5, 100)
             )
